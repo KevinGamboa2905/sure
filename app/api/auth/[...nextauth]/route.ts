@@ -57,7 +57,9 @@ if (process.env.APPLE_CLIENT_ID && process.env.APPLE_CLIENT_SECRET) {
 }
 
 if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error("NEXTAUTH_SECRET est requis pour NextAuth.");
+  // Pas de throw au niveau module (sinon le build échoue tant que la variable
+  // n'est pas définie). On avertit seulement ; le secret reste requis au runtime.
+  console.warn("NEXTAUTH_SECRET manquant — l'auth ne fonctionnera pas tant qu'il n'est pas défini.");
 }
 
 const authOptions = {

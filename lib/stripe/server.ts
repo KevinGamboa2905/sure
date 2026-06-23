@@ -7,9 +7,9 @@ export function getStripeServer(): Stripe {
     throw new Error("STRIPE_SECRET_KEY manquante — ajoutez la clé dans votre environnement.");
   }
   if (!_stripe) {
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2023-08-16",
-    });
+    // Pas d'apiVersion figée : on laisse le SDK utiliser sa version par défaut
+    // (évite les conflits de type entre versions du package `stripe`).
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   }
   return _stripe;
 }
