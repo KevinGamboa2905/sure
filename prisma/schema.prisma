@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── AUTH (NextAuth) ─────────────────────
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  hashedPassword String?
+  
+  accounts      Account[]
+  sessions      Session[]
+  restaurant    Restaurant?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── BUSINESS ────────────────────────────
+model Restaurant {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  name                String
+  tagline             String?
+  logoUrl             String?
+  
+  email               String
+  phone               String
+  address             String
+  city                String
+  
+  primaryColor        String   @default("#fcf376")
+  backgroundColor     String   @default("#fffee7")
+  textColor           String   @default("#000000")
+  font                String   @default("Helvetica Now Display")
+  
+  plan                String   @default("starter")
+  trialEndsAt         DateTime?
+  
+  stripeAccountId     String?  @unique
+  stripeOnboarded     Boolean  @default(false)
+  
+  depositEnabled      Boolean  @default(true)
+  depositPerCover     Int      @default(10)
+  cancellationWindow  Int      @default(48)
+  
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  reservations        Reservation[]
+  socialLinks         SocialLink[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model SocialLink {
+  id            String     @id @default(cuid())
+  restaurantId  String
+  type          String
+  url           String
+  enabled       Boolean    @default(true)
+  order         Int        @default(0)
+  
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+}
+
+model Reservation {
+  id                  String     @id @default(cuid())
+  restaurantId        String
+  
+  restaurant          Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  
+  clientName          String
+  clientPhone         String
+  clientEmail         String?
+  
+  date                DateTime
+  time                String
+  covers              Int
+  note                String?
+  
+  status              String     @default("pending")
+  
+  depositAmount       Int?
+  paymentIntentId     String?    @unique
+  paymentStatus       String?
+
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+}

@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "Helvetica Now Display", "Inter";
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Décale l'ancre sous la navbar sticky lors du smooth-scroll. */
+    scroll-padding-top: 5.5rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-creme text-gris-fonce font-display antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headlines en noir pur + tracking serré par défaut. */
+  h1, h2, h3, h4 {
+    @apply text-noir font-bold tracking-tight;
+  }
+
+  ::selection {
+    background-color: #fcf376;
+    color: #000000;
+  }
+
+  /* Focus visible accessible (anneau jaune sur fond sombre/clair). */
+  :focus-visible {
+    outline: 2px solid #000000;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---- Effet « surligneur Stabilo » jaune derrière un mot-clé ---- */
+  .stabilo {
+    @apply relative inline-block isolate;
+  }
+  .stabilo::before {
+    content: "";
+    @apply absolute -z-10 bg-jaune-vif;
+    left: -0.12em;
+    right: -0.12em;
+    bottom: 0.06em;
+    height: 0.42em;
+    transform: rotate(-1.4deg);
+    border-radius: 2px;
+  }
+
+  /* ---- Label kicker (uppercase, tracking large) ---- */
+  .kicker {
+    @apply text-xs uppercase tracking-label font-medium text-gris-fonce;
+  }
+
+  /* ---- Grain SVG très subtil, posé en overlay fixe non interactif ---- */
+  .grain-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+  }
+}

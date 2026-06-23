@@ -1,0 +1,16 @@
+/node_modules
+/.next/
+/out/
+/build
+.DS_Store
+*.pem
+npm-debug.log*
+.env
+.env.*
+!.env.example
+.vercel
+# Base SQLite locale éventuelle / fichiers Prisma générés
+*.db
+*.db-journal
+*.tsbuildinfo
+next-env.d.ts
