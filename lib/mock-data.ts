@@ -4,20 +4,6 @@
  * clients, analytics fictifs) ont été retirées : tout vient désormais de la DB.
  */
 
-/* --------------------------- Restaurant de démo --------------------------- */
-// Utilisé uniquement par la page publique d'exemple /r/lecerf-genevois.
-export const DEMO_RESTAURANT = {
-  slug: "lecerf-genevois",
-  name: "Le Cerf Genevois",
-  tagline: "Cuisine de terroir au cœur de Genève",
-  address: "Rue de Rive 12, 1204 Genève",
-  phone: "+41 22 000 00 00",
-  email: "contact@lecerf-geneve.ch",
-  website: "www.lecerf-geneve.ch",
-  plan: "Plan Pro",
-  monogram: "CG",
-};
-
 /* -------------------------------- KPIs ----------------------------------- */
 export type Kpi = {
   key: string;

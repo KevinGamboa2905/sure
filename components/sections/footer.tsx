@@ -10,7 +10,6 @@ const COLUMNS = [
       { label: "Solution", href: "/#solution" },
       { label: "Tarifs", href: "/#tarifs" },
       { label: "Essai gratuit", href: "/trial" },
-      { label: "Page de réservation (démo)", href: "/r/lecerf-genevois" },
       { label: "Espace restaurateur (démo)", href: "/dashboard" },
     ],
   },
