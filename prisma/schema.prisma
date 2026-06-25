@@ -76,6 +76,9 @@ model Restaurant {
 
   stripeAccountId     String?  @unique
   stripeOnboarded     Boolean  @default(false)
+  stripeCustomerId    String?  @unique
+  stripeSubscriptionId String?
+  billingInterval     String?  // "monthly" | "yearly"
 
   depositEnabled      Boolean  @default(false)
   depositPerCover     Int      @default(10)
