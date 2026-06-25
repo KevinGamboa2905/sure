@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { toast } from "sonner";
@@ -11,12 +12,44 @@ const inputCls =
 const labelCls = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gris-fonce";
 
 export function NewReservationModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const router = useRouter();
   const [deposit, setDeposit] = useState(true);
+  const [busy, setBusy] = useState(false);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    toast.success("Réservation créée · SMS envoyé");
-    onClose();
+    if (busy) return;
+    const el = e.currentTarget.elements;
+    const get = (id: string) => (el.namedItem(id) as HTMLInputElement | HTMLTextAreaElement | null)?.value ?? "";
+    setBusy(true);
+    try {
+      const res = await fetch("/api/reservation/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientName: get("nr-name"),
+          clientPhone: get("nr-tel"),
+          party: Number(get("nr-cov")) || 2,
+          date: get("nr-date"),
+          time: get("nr-time"),
+          note: get("nr-note"),
+          deposit,
+        }),
+      });
+      if (!res.ok) {
+        const p = await res.json().catch(() => null);
+        toast.error(p?.error ?? "La création a échoué.");
+        setBusy(false);
+        return;
+      }
+      toast.success("Réservation créée · SMS envoyé");
+      onClose();
+      router.refresh();
+    } catch {
+      toast.error("Erreur réseau. Réessayez.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -93,8 +126,8 @@ export function NewReservationModal({ open, onClose }: { open: boolean; onClose:
             </button>
 
             <div className="mt-6 flex gap-2">
-              <button type="submit" className="flex-1 rounded-full bg-jaune-vif py-3 text-sm font-bold text-noir transition-transform hover:-translate-y-0.5">
-                Créer la réservation
+              <button type="submit" disabled={busy} className="flex-1 rounded-full bg-jaune-vif py-3 text-sm font-bold text-noir transition-transform hover:-translate-y-0.5 disabled:opacity-60">
+                {busy ? "Création…" : "Créer la réservation"}
               </button>
               <button type="button" onClick={onClose} className="rounded-full border border-hair px-5 py-3 text-sm font-medium text-noir transition-colors hover:border-noir">
                 Annuler

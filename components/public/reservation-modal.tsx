@@ -27,8 +27,37 @@ export function ReservationModal({
   const [form, setForm] = useState({ date: "", time: "19:30", party: 2, name: "", phone: "", email: "" });
 
   const deposit = form.party * 10;
+  const [busy, setBusy] = useState(false);
 
-  function confirm() {
+  async function confirm() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/reservation/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug,
+          date: form.date,
+          time: form.time,
+          party: form.party,
+          clientName: form.name || "Client",
+          clientPhone: form.phone,
+          clientEmail: form.email,
+          deposit: true,
+        }),
+      });
+      if (!res.ok) {
+        const p = await res.json().catch(() => null);
+        toast.error(p?.error ?? "La réservation a échoué.");
+        setBusy(false);
+        return;
+      }
+    } catch {
+      toast.error("Erreur réseau. Réessayez.");
+      setBusy(false);
+      return;
+    }
     toast.success("Réservation confirmée · SMS envoyé");
     const q = new URLSearchParams({
       name: form.name || "Client",
@@ -40,6 +69,7 @@ export function ReservationModal({
     });
     onClose();
     setStep(0);
+    setBusy(false);
     router.push(`/r/${slug}/confirmation?${q.toString()}`);
   }
 
@@ -147,7 +177,7 @@ export function ReservationModal({
               {step < 2 ? (
                 <button onClick={() => setStep((s) => s + 1)} className="flex-1 rounded-full bg-jaune-vif py-3 text-sm font-bold text-noir transition-transform hover:-translate-y-0.5">Continuer</button>
               ) : (
-                <button onClick={confirm} className="flex-1 rounded-full bg-noir py-3 text-sm font-bold text-jaune-vif transition-transform hover:-translate-y-0.5">Confirmer le paiement</button>
+                <button onClick={confirm} disabled={busy} className="flex-1 rounded-full bg-noir py-3 text-sm font-bold text-jaune-vif transition-transform hover:-translate-y-0.5 disabled:opacity-60">{busy ? "Confirmation…" : "Confirmer le paiement"}</button>
               )}
             </div>
           </motion.div>
