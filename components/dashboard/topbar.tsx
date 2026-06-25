@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Menu, Plus, User, CreditCard, LifeBuoy, LogOut, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
-import { DEMO_RESTAURANT } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/Avatar";
+import { planLabel } from "@/lib/plans";
 import { NewReservationModal } from "./new-reservation-modal";
+import type { DashRestaurant } from "./sidebar";
 
-export function Topbar({ onMenu }: { onMenu: () => void }) {
+export function Topbar({ onMenu, restaurant }: { onMenu: () => void; restaurant: DashRestaurant }) {
   const router = useRouter();
   const { logout } = useAuth();
   const [modal, setModal] = useState(false);
@@ -27,8 +29,8 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
             <Menu className="h-5 w-5" />
           </button>
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold tracking-tight text-noir">{DEMO_RESTAURANT.name}</p>
-            <p className="hidden text-xs text-gris-fonce sm:block">{DEMO_RESTAURANT.address}</p>
+            <p className="truncate text-sm font-bold tracking-tight text-noir">{restaurant.name}</p>
+            <p className="hidden truncate text-xs text-gris-fonce sm:block">{restaurant.address}</p>
           </div>
         </div>
 
@@ -39,7 +41,6 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
             <span className="sm:hidden">Réserver</span>
           </Button>
 
-          {/* Avatar + dropdown */}
           <div className="relative">
             <button
               onClick={() => setMenu((v) => !v)}
@@ -47,9 +48,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
               aria-expanded={menu}
               className="flex items-center gap-1 rounded-full"
             >
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-noir text-xs font-bold text-jaune-vif">
-                {DEMO_RESTAURANT.monogram}
-              </span>
+              <Avatar name={restaurant.name} imageUrl={restaurant.logoUrl} size="md" />
               <ChevronDown className="hidden h-4 w-4 text-gris-fonce sm:block" />
             </button>
 
@@ -58,14 +57,14 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
                 <div className="fixed inset-0 z-10" onClick={() => setMenu(false)} />
                 <div className="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-2xl border border-hair bg-blanc py-1.5 shadow-lift">
                   <div className="border-b border-hair px-4 py-2.5">
-                    <p className="text-sm font-bold text-noir">{DEMO_RESTAURANT.name}</p>
-                    <p className="text-xs text-gris-fonce">{DEMO_RESTAURANT.plan}</p>
+                    <p className="truncate text-sm font-bold text-noir">{restaurant.name}</p>
+                    <p className="text-xs text-gris-fonce">Plan {planLabel(restaurant.plan)}</p>
                   </div>
                   {[
                     { label: "Mon profil", icon: User, action: () => router.push("/dashboard/parametres") },
-                    { label: "Mon abonnement", icon: CreditCard, action: () => router.push("/dashboard/parametres") },
-                    { label: "Aide", icon: LifeBuoy, action: () => toast("Centre d'aide — démo") },
-                    { label: "Déconnexion", icon: LogOut, action: () => { logout(); toast.success("Déconnecté"); router.push("/login"); } },
+                    { label: "Mon abonnement", icon: CreditCard, action: () => router.push("/dashboard/parametres/abonnement") },
+                    { label: "Aide", icon: LifeBuoy, action: () => router.push("/dashboard/aide") },
+                    { label: "Déconnexion", icon: LogOut, action: () => { logout(); toast.success("Déconnecté"); } },
                   ].map((it) => (
                     <button
                       key={it.label}

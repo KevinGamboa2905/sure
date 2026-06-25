@@ -11,8 +11,17 @@ import {
   X,
 } from "lucide-react";
 import { Wordmark } from "@/components/brand/wordmark";
-import { DEMO_RESTAURANT } from "@/lib/mock-data";
+import { Avatar } from "@/components/ui/Avatar";
+import { planLabel } from "@/lib/plans";
 import { cn } from "@/lib/utils";
+
+export type DashRestaurant = {
+  name: string;
+  address: string;
+  plan: string;
+  slug: string;
+  logoUrl?: string | null;
+};
 
 const NAV = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -23,20 +32,21 @@ const NAV = [
   { label: "Paramètres", href: "/dashboard/parametres", icon: Settings },
 ];
 
-function NavContent({ onNavigate }: { onNavigate?: () => void }) {
+function NavContent({ restaurant, onNavigate }: { restaurant: DashRestaurant; onNavigate?: () => void }) {
   const pathname = usePathname();
   return (
     <div className="flex h-full flex-col">
       <div className="px-5 pt-5">
         <Wordmark />
         {/* Bloc info restaurant */}
-        <div className="mt-5 rounded-2xl border border-hair bg-creme/60 p-3">
-          <p className="text-sm font-bold tracking-tight text-noir">
-            {DEMO_RESTAURANT.name}
-          </p>
-          <span className="mt-1 inline-flex items-center rounded-full bg-jaune-vif px-2 py-0.5 text-[11px] font-bold text-noir">
-            {DEMO_RESTAURANT.plan}
-          </span>
+        <div className="mt-5 flex items-center gap-3 rounded-2xl border border-hair bg-creme/60 p-3">
+          <Avatar name={restaurant.name} imageUrl={restaurant.logoUrl} size="sm" />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold tracking-tight text-noir">{restaurant.name}</p>
+            <span className="mt-1 inline-flex items-center rounded-full bg-jaune-vif px-2 py-0.5 text-[11px] font-bold text-noir">
+              Plan {planLabel(restaurant.plan)}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -62,36 +72,34 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
           );
         })}
       </nav>
-
-      <div className="px-5 py-4">
-        <p className="text-[11px] text-gris-clair">Démo · données fictives</p>
-      </div>
     </div>
   );
 }
 
-export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function Sidebar({
+  open,
+  onClose,
+  restaurant,
+}: {
+  open: boolean;
+  onClose: () => void;
+  restaurant: DashRestaurant;
+}) {
   return (
     <>
       {/* Desktop : fixe */}
       <aside className="fixed left-0 top-0 z-30 hidden h-[100dvh] w-[220px] border-r border-hair bg-blanc lg:block">
-        <NavContent />
+        <NavContent restaurant={restaurant} />
       </aside>
 
       {/* Mobile : drawer */}
       <div
-        className={cn(
-          "fixed inset-0 z-50 lg:hidden",
-          open ? "pointer-events-auto" : "pointer-events-none",
-        )}
+        className={cn("fixed inset-0 z-50 lg:hidden", open ? "pointer-events-auto" : "pointer-events-none")}
         aria-hidden={!open}
       >
         <div
           onClick={onClose}
-          className={cn(
-            "absolute inset-0 bg-noir/40 transition-opacity duration-300",
-            open ? "opacity-100" : "opacity-0",
-          )}
+          className={cn("absolute inset-0 bg-noir/40 transition-opacity duration-300", open ? "opacity-100" : "opacity-0")}
         />
         <aside
           className={cn(
@@ -108,7 +116,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           >
             <X className="h-5 w-5" />
           </button>
-          <NavContent onNavigate={onClose} />
+          <NavContent restaurant={restaurant} onNavigate={onClose} />
         </aside>
       </div>
     </>

@@ -70,13 +70,14 @@ model Restaurant {
   textColor           String   @default("#000000")
   font                String   @default("Helvetica Now Display")
   
-  plan                String   @default("starter")
+  plan                String   @default("pro")
   trialEndsAt         DateTime?
-  
+  hasPaid             Boolean  @default(false)
+
   stripeAccountId     String?  @unique
   stripeOnboarded     Boolean  @default(false)
-  
-  depositEnabled      Boolean  @default(true)
+
+  depositEnabled      Boolean  @default(false)
   depositPerCover     Int      @default(10)
   cancellationWindow  Int      @default(48)
   

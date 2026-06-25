@@ -1,113 +1,70 @@
-"use client";
+import { ClipboardList } from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import { requireRestaurant } from "@/lib/session-restaurant";
+import { EmptyState } from "@/components/dashboard/empty-state";
 
-import { useState } from "react";
-import { MoreHorizontal, Search, Download, Plus } from "lucide-react";
-import { toast } from "sonner";
-import { ALL_RESERVATIONS, type ResaStatus } from "@/lib/mock-data";
-import { BadgeStatus } from "@/components/dashboard/badge-status";
-import { NewReservationModal } from "@/components/dashboard/new-reservation-modal";
-import { cn } from "@/lib/utils";
+const STATUS_FR: Record<string, { label: string; cls: string }> = {
+  confirmed: { label: "Confirmé", cls: "bg-[#27ae60]/12 text-[#1e7e43]" },
+  pending: { label: "En attente", cls: "bg-amber-100 text-amber-700" },
+  noshow: { label: "No-show", cls: "bg-[#c0392b]/12 text-[#c0392b]" },
+  cancelled: { label: "Annulée", cls: "bg-noir/[0.06] text-gris-fonce" },
+};
 
-const TABS: { label: string; value: "Toutes" | ResaStatus }[] = [
-  { label: "Toutes", value: "Toutes" },
-  { label: "Confirmées", value: "Confirmé" },
-  { label: "En attente", value: "En attente" },
-  { label: "No-shows", value: "No-show" },
-];
-
-export default function ReservationsPage() {
-  const [tab, setTab] = useState<"Toutes" | ResaStatus>("Toutes");
-  const [q, setQ] = useState("");
-  const [modal, setModal] = useState(false);
-
-  const rows = ALL_RESERVATIONS.filter(
-    (r) => (tab === "Toutes" || r.status === tab) &&
-      (r.client.toLowerCase().includes(q.toLowerCase()) || r.date.includes(q)),
-  );
+export default async function ReservationsPage() {
+  const { restaurant } = await requireRestaurant();
+  const rows = await prisma.reservation.findMany({
+    where: { restaurantId: restaurant.id },
+    orderBy: { date: "desc" },
+  });
 
   return (
     <div className="mx-auto max-w-6xl">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-noir sm:text-3xl">Réservations</h1>
-          <p className="mt-1 text-gris-fonce">Toutes vos réservations à venir et passées.</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gris-fonce" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher…" className="h-10 w-44 rounded-full border border-hair bg-blanc pl-9 pr-3 text-sm text-noir outline-none transition-colors placeholder:text-gris-clair focus:border-noir sm:w-56" />
-          </div>
-          <button onClick={() => toast.success("Export CSV généré")} className="inline-flex h-10 items-center gap-1.5 rounded-full border border-hair bg-blanc px-4 text-sm font-medium text-noir transition-colors hover:border-noir">
-            <Download className="h-4 w-4" /> <span className="hidden sm:inline">Exporter CSV</span>
-          </button>
-          <button onClick={() => setModal(true)} className="inline-flex h-10 items-center gap-1.5 rounded-full bg-jaune-vif px-4 text-sm font-bold text-noir transition-transform hover:-translate-y-0.5">
-            <Plus className="h-4 w-4" strokeWidth={2.5} /> <span className="hidden sm:inline">Nouvelle réservation</span>
-          </button>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold tracking-tight text-noir sm:text-3xl">Réservations</h1>
+        <p className="mt-1 text-gris-fonce">Toutes vos réservations à venir et passées.</p>
       </div>
 
-      {/* Tabs */}
-      <div className="mb-4 flex flex-wrap gap-2">
-        {TABS.map((t) => {
-          const count = t.value === "Toutes" ? ALL_RESERVATIONS.length : ALL_RESERVATIONS.filter((r) => r.status === t.value).length;
-          return (
-            <button
-              key={t.value}
-              onClick={() => setTab(t.value)}
-              className={cn(
-                "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
-                tab === t.value ? "border-noir bg-noir text-creme" : "border-hair bg-blanc text-gris-fonce hover:border-noir hover:text-noir",
-              )}
-            >
-              {t.label} <span className="opacity-60">· {count}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Table */}
-      <div className="overflow-x-auto rounded-2xl border border-hair bg-blanc">
-        <table className="w-full min-w-[680px] text-left text-sm">
-          <thead>
-            <tr className="border-b border-hair text-xs uppercase tracking-wide text-gris-fonce">
-              <th className="px-5 py-3 font-medium">Date</th>
-              <th className="px-5 py-3 font-medium">Client</th>
-              <th className="px-5 py-3 font-medium">Couverts</th>
-              <th className="px-5 py-3 font-medium">Acompte</th>
-              <th className="px-5 py-3 font-medium">Statut</th>
-              <th className="px-5 py-3 text-right font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.id} className="border-b border-hair last:border-0 transition-colors hover:bg-creme/40">
-                <td className="px-5 py-3 text-noir">
-                  <span className="font-medium">{r.date}</span>
-                  <span className="ml-2 font-mono text-xs text-gris-fonce">{r.time}</span>
-                </td>
-                <td className="px-5 py-3 font-medium text-noir">{r.client}</td>
-                <td className="px-5 py-3 text-gris-fonce">{r.party}</td>
-                <td className="px-5 py-3 text-gris-fonce">{r.deposit}</td>
-                <td className="px-5 py-3"><BadgeStatus status={r.status} /></td>
-                <td className="px-5 py-3 text-right">
-                  <button
-                    onClick={() => toast(`${r.client} · ${r.date} ${r.time} — démo`)}
-                    aria-label="Actions"
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gris-fonce transition-colors hover:bg-noir/[0.06] hover:text-noir"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </button>
-                </td>
+      {rows.length === 0 ? (
+        <EmptyState
+          icon={ClipboardList}
+          title="Aucune réservation pour le moment"
+          description="Dès qu'un client réservera depuis votre page Tably, sa réservation apparaîtra ici."
+          action={{ label: "Voir ma page de réservation", href: `/r/${restaurant.slug}`, external: true }}
+        />
+      ) : (
+        <div className="overflow-x-auto rounded-2xl border border-hair bg-blanc">
+          <table className="w-full min-w-[640px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-hair text-xs uppercase tracking-wide text-gris-fonce">
+                <th className="px-5 py-3 font-medium">Date</th>
+                <th className="px-5 py-3 font-medium">Client</th>
+                <th className="px-5 py-3 font-medium">Couverts</th>
+                <th className="px-5 py-3 font-medium">Acompte</th>
+                <th className="px-5 py-3 font-medium">Statut</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {rows.length === 0 && (
-          <p className="px-5 py-10 text-center text-sm text-gris-fonce">Aucune réservation dans cette catégorie.</p>
-        )}
-      </div>
-
-      <NewReservationModal open={modal} onClose={() => setModal(false)} />
+            </thead>
+            <tbody>
+              {rows.map((r) => {
+                const s = STATUS_FR[r.status] ?? STATUS_FR.pending;
+                return (
+                  <tr key={r.id} className="border-b border-hair last:border-0">
+                    <td className="px-5 py-3 text-noir">
+                      <span className="font-medium">{new Date(r.date).toLocaleDateString("fr-CH", { day: "numeric", month: "short" })}</span>
+                      <span className="ml-2 font-mono text-xs text-gris-fonce">{r.time}</span>
+                    </td>
+                    <td className="px-5 py-3 font-medium text-noir">{r.clientName}</td>
+                    <td className="px-5 py-3 text-gris-fonce">{r.covers}</td>
+                    <td className="px-5 py-3 text-gris-fonce">{r.depositAmount ? `${r.depositAmount} CHF` : "—"}</td>
+                    <td className="px-5 py-3">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${s.cls}`}>{s.label}</span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

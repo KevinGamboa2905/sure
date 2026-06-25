@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { WEEK_CHART } from "@/lib/mock-data";
+import { WEEK_CHART as DEFAULT_WEEK } from "@/lib/mock-data";
 
-export function WeekChart() {
-  const max = Math.max(...WEEK_CHART.map((d) => d.confirmed + d.noshow));
+type WeekDatum = { day: string; confirmed: number; noshow: number };
+
+export function WeekChart({ data = DEFAULT_WEEK }: { data?: WeekDatum[] }) {
+  const max = Math.max(1, ...data.map((d) => d.confirmed + d.noshow));
 
   return (
     <div className="rounded-2xl border border-hair bg-blanc p-6">
@@ -23,7 +25,7 @@ export function WeekChart() {
       </div>
 
       <div className="mt-6 flex h-44 items-end justify-between gap-3">
-        {WEEK_CHART.map((d) => (
+        {data.map((d) => (
           <div key={d.day} className="flex flex-1 flex-col items-center gap-2">
             <div className="flex w-full flex-1 items-end justify-center gap-1">
               <motion.div
