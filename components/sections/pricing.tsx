@@ -20,10 +20,10 @@ const PLANS: Plan[] = [
   {
     name: "Essentiel",
     monthly: 49,
-    tagline: "Pour démarrer et stopper les no-shows simples.",
+    tagline: "Pour les cafés et petits restaurants.",
     features: [
       "Rappels SMS J-1 et H-2",
-      "Jusqu'à 150 réservations / mois",
+      "Jusqu'à 100 réservations / mois",
       "Confirmation par SMS",
       "Dashboard de base",
       "Support par e-mail",
@@ -32,32 +32,29 @@ const PLANS: Plan[] = [
   },
   {
     name: "Pro",
-    monthly: 89,
-    tagline: "Le choix des restaurants 30–80 couverts.",
+    monthly: 99,
+    tagline: "Pour les restaurants 30–80 couverts.",
     features: [
-      "Tout Essentiel, sans limite",
+      "Réservations illimitées",
       "Acompte sécurisé Stripe",
-      "SMS illimités",
-      "Dashboard temps réel + exports",
-      "Rappels personnalisables",
+      "SMS illimités + modèles",
+      "Personnalisation complète",
+      "Analytics avancées",
+      "Synchro Google Calendar",
       "Support prioritaire",
     ],
     cta: "Choisir Pro",
     featured: true,
   },
-  {
-    name: "Maison",
-    monthly: 149,
-    tagline: "Pour les groupes et plusieurs établissements.",
-    features: [
-      "Tout Pro",
-      "Multi-établissements",
-      "Intégrations avec vos outils",
-      "Comptes équipe illimités",
-      "Accompagnement dédié",
-    ],
-    cta: "Parler à l'équipe",
-  },
+];
+
+const CUSTOM_FEATURES = [
+  "Plusieurs établissements",
+  "Domaine personnalisé (tably.votre-resto.ch)",
+  "Intégrations API sur mesure",
+  "Onboarding dédié avec notre équipe",
+  "Support prioritaire 7j/7",
+  "SLA garanti",
 ];
 
 function priceFor(plan: Plan, annual: boolean) {
@@ -178,6 +175,40 @@ export function Pricing() {
               </motion.article>
             </Reveal>
           ))}
+
+          {/* Carte Sur mesure */}
+          <Reveal>
+            <motion.article
+              whileHover={{ y: -6 }}
+              transition={{ type: "spring", stiffness: 200, damping: 18 }}
+              className="flex h-full flex-col rounded-3xl border-2 border-noir bg-noir p-8 text-creme shadow-card"
+            >
+              <span className="mb-4 inline-flex w-fit items-center rounded-full bg-jaune-vif px-3 py-1 text-xs font-bold uppercase tracking-label text-noir">
+                Sur mesure
+              </span>
+              <h3 className="text-xl font-bold tracking-tight">Une solution adaptée</h3>
+              <p className="mt-1 text-sm text-creme/70">
+                Multi-établissements, chaînes, intégrations spécifiques ? On vous accompagne.
+              </p>
+              <div className="mt-6 flex items-end gap-1.5">
+                <span className="text-3xl font-bold tracking-tight">Sur devis</span>
+              </div>
+              <p className="mt-1 h-5 text-xs text-creme/50">Tarif selon vos besoins</p>
+
+              <Button asChild size="lg" variant="primary" className="mt-6 w-full">
+                <a href="/contact?subject=sur-mesure">Contacter l&apos;équipe</a>
+              </Button>
+
+              <ul className="mt-8 space-y-3">
+                {CUSTOM_FEATURES.map((f) => (
+                  <li key={f} className="flex items-start gap-3 text-sm text-creme/85">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-jaune-vif" strokeWidth={2.5} />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </motion.article>
+          </Reveal>
         </RevealGroup>
 
         <Reveal standalone>

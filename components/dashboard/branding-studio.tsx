@@ -148,7 +148,7 @@ export function BrandingStudio({ restaurant, socials, effectivePlan, inTrial }: 
 
           <section className="rounded-2xl border border-hair bg-blanc p-5">
             <h3 className="text-xs font-bold uppercase tracking-label text-noir">Police</h3>
-            <FeatureLock requiredPlan="premium" currentPlan={effectivePlan} isInTrial={inTrial} featureName="les polices personnalisées">
+            <FeatureLock requiredPlan="pro" currentPlan={effectivePlan} isInTrial={inTrial} featureName="les polices personnalisées">
               <select value={v.font} onChange={(e) => set({ font: e.target.value })} className={cn(inputCls, "mt-4 appearance-none")}>
                 {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
               </select>

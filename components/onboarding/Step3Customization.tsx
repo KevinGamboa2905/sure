@@ -94,7 +94,7 @@ export function Step3Customization({
       <section>
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-bold uppercase tracking-label text-noir">Couleurs</h3>
-          <PlanBadge label="Pro & Premium" />
+          <PlanBadge label="Pro" />
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {BRAND_PRESETS.map((p) => (
@@ -127,19 +127,19 @@ export function Step3Customization({
       <section>
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-bold uppercase tracking-label text-noir">Police</h3>
-          <PlanBadge label="Premium" />
+          <PlanBadge label="Pro" />
         </div>
         <select value={value.font} onChange={(e) => onChange({ font: e.target.value })} className={cn(inputCls, "mt-3 appearance-none")}>
           {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
         </select>
-        <Hint>Hors essai, les polices personnalisées sont réservées au plan Premium.</Hint>
+        <Hint>Hors essai, les polices personnalisées sont réservées au plan Pro.</Hint>
       </section>
 
       {/* 4 — Acompte */}
       <section>
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-bold uppercase tracking-label text-noir">Acompte</h3>
-          <PlanBadge label="Pro & Premium" />
+          <PlanBadge label="Pro" />
         </div>
         <button
           type="button"

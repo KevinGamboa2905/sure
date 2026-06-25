@@ -12,32 +12,35 @@ import { cn } from "@/lib/utils";
 
 const PLANS = [
   {
-    name: "Starter", monthly: 49, annual: 39, tagline: "Pour démarrer sereinement",
-    features: ["Jusqu'à 200 réservations / mois", "Rappels SMS J-1", "Page de réservation Tably", "1 utilisateur", "Support email"],
+    name: "Essentiel", monthly: 49, annual: 41, tagline: "Pour les cafés et petits restaurants",
+    features: ["Jusqu'à 100 réservations / mois", "Rappels SMS J-1 & H-2", "Page de réservation Tably", "Dashboard de base", "Support email"],
     featured: false,
   },
   {
-    name: "Pro", monthly: 89, annual: 74, tagline: "Le choix des restaurants complets",
-    features: ["Réservations illimitées", "Rappels SMS J-1 & H-2", "Acomptes Stripe", "Page 100% personnalisable", "3 utilisateurs", "Analytics avancées", "Support prioritaire"],
+    name: "Pro", monthly: 99, annual: 83, tagline: "Pour les restaurants 30–80 couverts",
+    features: ["Réservations illimitées", "Acomptes Stripe", "SMS illimités + modèles", "Personnalisation complète", "Analytics avancées", "Synchro Google Calendar", "Support prioritaire"],
     featured: true,
-  },
-  {
-    name: "Premium", monthly: 149, annual: 124, tagline: "Pour les groupes & multi-sites",
-    features: ["Tout le plan Pro", "Multi-établissements", "Utilisateurs illimités", "API & intégrations", "Account manager dédié", "Onboarding sur-mesure"],
-    featured: false,
   },
 ];
 
 const MATRIX = [
-  { label: "Réservations illimitées", v: [false, true, true] },
-  { label: "Rappels SMS J-1 & H-2", v: [false, true, true] },
-  { label: "Acomptes Stripe", v: [false, true, true] },
-  { label: "Page de réservation personnalisée", v: [true, true, true] },
-  { label: "Multi-utilisateurs", v: [false, true, true] },
-  { label: "Analytics avancées", v: [false, true, true] },
-  { label: "Multi-établissements", v: [false, false, true] },
-  { label: "API & intégrations", v: [false, false, true] },
-  { label: "Support prioritaire", v: [false, true, true] },
+  { label: "Rappels SMS J-1 & H-2", v: [true, true] },
+  { label: "Réservations illimitées", v: [false, true] },
+  { label: "Acomptes Stripe", v: [false, true] },
+  { label: "Personnalisation complète", v: [false, true] },
+  { label: "Modèles SMS personnalisés", v: [false, true] },
+  { label: "Analytics avancées", v: [false, true] },
+  { label: "Synchro Google Calendar", v: [false, true] },
+  { label: "Support prioritaire", v: [false, true] },
+];
+
+const CUSTOM_FEATURES = [
+  "Plusieurs établissements",
+  "Domaine personnalisé (tably.votre-resto.ch)",
+  "Intégrations API sur mesure",
+  "Onboarding dédié avec notre équipe",
+  "Support prioritaire 7j/7",
+  "SLA garanti",
 ];
 
 const FAQ = [
@@ -102,6 +105,27 @@ export default function TarifsPage() {
               </article>
             </Reveal>
           ))}
+
+          {/* Sur mesure */}
+          <Reveal>
+            <article className="flex h-full flex-col rounded-3xl border-2 border-noir bg-noir p-7 text-creme shadow-card">
+              <span className="mb-3 inline-flex w-fit rounded-full bg-jaune-vif px-3 py-1 text-xs font-bold uppercase tracking-label text-noir">Sur mesure</span>
+              <h3 className="text-xl font-bold tracking-tight">Une solution adaptée</h3>
+              <p className="mt-1 text-sm text-creme/70">Multi-établissements, chaînes, intégrations spécifiques ?</p>
+              <p className="mt-5 text-3xl font-bold tracking-tight">Sur devis</p>
+              <Button asChild variant="primary" className="mt-5 w-full justify-center">
+                <a href="/contact?subject=sur-mesure">Contacter l&apos;équipe</a>
+              </Button>
+              <ul className="mt-6 space-y-2.5">
+                {CUSTOM_FEATURES.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm text-creme/85">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-jaune-vif" strokeWidth={2.5} />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </Reveal>
         </RevealGroup>
         <p className="mt-6 text-center text-sm text-gris-fonce">Prix hors TVA · facturation {annual ? "annuelle" : "mensuelle"} · résiliable en 1 clic</p>
       </section>

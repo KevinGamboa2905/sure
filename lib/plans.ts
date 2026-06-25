@@ -1,4 +1,4 @@
-export type PlanKey = "essential" | "pro" | "premium";
+export type PlanKey = "essential" | "pro";
 
 export interface Plan {
   key: PlanKey;
@@ -12,10 +12,8 @@ export interface Plan {
     depositSystem: boolean;
     customBranding: boolean;
     analytics: "basic" | "advanced";
-    multipleLocations: number;
     googleCalendarSync: boolean;
     prioritySupport: boolean;
-    customDomain: boolean;
     smsCustomTemplates: boolean;
     stripeConnect: boolean;
   };
@@ -27,7 +25,7 @@ export const PLANS: Record<PlanKey, Plan> = {
     key: "essential",
     name: "Essentiel",
     monthlyPrice: 49,
-    yearlyPrice: 490, // -2 mois
+    yearlyPrice: 490,
     description: "Pour les cafés et petits restaurants",
     features: {
       maxReservationsPerMonth: 100,
@@ -35,10 +33,8 @@ export const PLANS: Record<PlanKey, Plan> = {
       depositSystem: false,
       customBranding: false,
       analytics: "basic",
-      multipleLocations: 1,
       googleCalendarSync: false,
       prioritySupport: false,
-      customDomain: false,
       smsCustomTemplates: false,
       stripeConnect: false,
     },
@@ -56,30 +52,8 @@ export const PLANS: Record<PlanKey, Plan> = {
       depositSystem: true,
       customBranding: true,
       analytics: "advanced",
-      multipleLocations: 1,
-      googleCalendarSync: false,
-      prioritySupport: false,
-      customDomain: false,
-      smsCustomTemplates: true,
-      stripeConnect: true,
-    },
-  },
-  premium: {
-    key: "premium",
-    name: "Premium",
-    monthlyPrice: 179,
-    yearlyPrice: 1790,
-    description: "Pour les multi-établissements",
-    features: {
-      maxReservationsPerMonth: "unlimited",
-      smsReminders: true,
-      depositSystem: true,
-      customBranding: true,
-      analytics: "advanced",
-      multipleLocations: 3,
       googleCalendarSync: true,
       prioritySupport: true,
-      customDomain: true,
       smsCustomTemplates: true,
       stripeConnect: true,
     },
@@ -90,21 +64,17 @@ export function getPlan(key: PlanKey): Plan {
   return PLANS[key];
 }
 
+/** Libellé d'affichage, robuste si une valeur inconnue traîne en DB. */
 export function planLabel(key: string): string {
   return PLANS[key as PlanKey]?.name ?? "Essentiel";
 }
 
 export function hasFeature(planKey: PlanKey, feature: keyof Plan["features"]): boolean {
   const value = PLANS[planKey].features[feature];
-  return (
-    value === true ||
-    value === "advanced" ||
-    value === "unlimited" ||
-    (typeof value === "number" && value > 1)
-  );
+  return value === true || value === "advanced" || value === "unlimited";
 }
 
 export function canAccess(currentPlan: PlanKey, requiredPlan: PlanKey): boolean {
-  const order: PlanKey[] = ["essential", "pro", "premium"];
+  const order: PlanKey[] = ["essential", "pro"];
   return order.indexOf(currentPlan) >= order.indexOf(requiredPlan);
 }

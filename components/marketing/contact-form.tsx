@@ -6,7 +6,7 @@ const inputCls =
   "h-11 w-full rounded-xl border border-hair bg-blanc px-3.5 text-sm text-noir outline-none transition-colors placeholder:text-gris-clair focus:border-noir";
 const labelCls = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gris-fonce";
 
-export function ContactForm() {
+export function ContactForm({ defaultSubject = "" }: { defaultSubject?: string }) {
   return (
     <form
       onSubmit={(e) => { e.preventDefault(); toast.success("Message envoyé · nous revenons vers vous"); (e.target as HTMLFormElement).reset(); }}
@@ -24,7 +24,7 @@ export function ContactForm() {
       </div>
       <div>
         <label htmlFor="ct-subject" className={labelCls}>Sujet</label>
-        <input id="ct-subject" required placeholder="Démo, tarifs, support…" className={inputCls} />
+        <input id="ct-subject" required defaultValue={defaultSubject} placeholder="Démo, tarifs, support…" className={inputCls} />
       </div>
       <div>
         <label htmlFor="ct-msg" className={labelCls}>Message</label>

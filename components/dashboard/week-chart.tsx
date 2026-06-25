@@ -1,11 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { WEEK_CHART as DEFAULT_WEEK } from "@/lib/mock-data";
 
 type WeekDatum = { day: string; confirmed: number; noshow: number };
 
-export function WeekChart({ data = DEFAULT_WEEK }: { data?: WeekDatum[] }) {
+export function WeekChart({ data }: { data: WeekDatum[] }) {
   const max = Math.max(1, ...data.map((d) => d.confirmed + d.noshow));
 
   return (

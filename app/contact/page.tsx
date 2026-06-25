@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   description: "Une question sur Tably ? Écrivez-nous, on répond en français sous 24h.",
 };
 
-export default function ContactPage() {
+export default function ContactPage({ searchParams }: { searchParams: { subject?: string } }) {
+  const defaultSubject = searchParams?.subject === "sur-mesure" ? "Demande Plan Sur mesure" : "";
   return (
     <div className="bg-creme">
       <PublicHeader />
@@ -27,7 +28,7 @@ export default function ContactPage() {
           <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
             {/* Formulaire */}
             <div className="rounded-3xl border border-hair bg-blanc p-7 sm:p-8">
-              <ContactForm />
+              <ContactForm defaultSubject={defaultSubject} />
             </div>
 
             {/* Coordonnées + carte */}
