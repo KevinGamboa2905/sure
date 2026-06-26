@@ -220,7 +220,7 @@ export function Hero() {
             variants={fadeUp}
             className="mt-5 text-sm text-blanc/70"
           >
-            14 jours gratuits · Sans carte bancaire · Installation en 10 minutes
+            30 jours gratuits · Sans carte bancaire · Installation en 10 minutes
           </motion.p>
         </motion.div>
 

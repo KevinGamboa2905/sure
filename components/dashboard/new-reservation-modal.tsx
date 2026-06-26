@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
@@ -15,6 +16,8 @@ export function NewReservationModal({ open, onClose }: { open: boolean; onClose:
   const router = useRouter();
   const [deposit, setDeposit] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,11 +55,13 @@ export function NewReservationModal({ open, onClose }: { open: boolean; onClose:
     }
   }
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[80] flex items-end justify-center p-0 sm:items-center sm:p-6"
+          className="fixed inset-0 z-[100] flex items-end justify-center overflow-y-auto p-0 sm:items-center sm:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -68,7 +73,7 @@ export function NewReservationModal({ open, onClose }: { open: boolean; onClose:
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 20, opacity: 0 }}
             transition={{ type: "spring", stiffness: 240, damping: 24 }}
-            className="relative w-full max-w-lg rounded-t-3xl border border-hair bg-blanc p-6 shadow-lift sm:rounded-3xl"
+            className="relative my-auto max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-hair bg-blanc p-6 shadow-lift sm:rounded-3xl"
           >
             <button
               type="button"
@@ -136,6 +141,7 @@ export function NewReservationModal({ open, onClose }: { open: boolean; onClose:
           </motion.form>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

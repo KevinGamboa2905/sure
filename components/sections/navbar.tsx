@@ -73,7 +73,10 @@ export function Navbar() {
           </ul>
 
           {/* CTA (desktop) */}
-          <div className="hidden md:block">
+          <div className="hidden items-center gap-4 md:flex">
+            <a href="/login" className="text-sm font-medium text-noir transition-colors hover:text-gris-fonce">
+              Se connecter
+            </a>
             <Button asChild size="sm" variant="primary">
               <a href="/signup">Essai gratuit</a>
             </Button>
@@ -129,9 +132,12 @@ export function Navbar() {
           ))}
         </ul>
 
-        <div className="mt-auto pb-10 pt-8">
+        <div className="mt-auto flex flex-col gap-3 pb-10 pt-8">
           <Button asChild size="lg" variant="primary" className="w-full">
-            <a href="/signup">Essai gratuit — 14 jours</a>
+            <a href="/signup">Essai gratuit — 30 jours</a>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="w-full">
+            <a href="/login">Se connecter</a>
           </Button>
         </div>
       </div>

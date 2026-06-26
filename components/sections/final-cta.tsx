@@ -47,7 +47,7 @@ export function FinalCTA() {
               </a>
             </Button>
             <p className="text-sm text-creme/50">
-              14 jours gratuits · Sans carte bancaire
+              30 jours gratuits · Sans carte bancaire
             </p>
           </div>
         </Reveal>
