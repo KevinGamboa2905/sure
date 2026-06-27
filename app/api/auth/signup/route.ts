@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   });
 
   try {
-    await sendWelcomeEmail(lowerEmail, name, restaurant);
+    await sendWelcomeEmail({ to: lowerEmail, name });
   } catch (error) {
     console.warn("Erreur d'envoi d'email de bienvenue :", error);
   }
